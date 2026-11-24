@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shape Evolution 3D</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js Free CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div id="game-container"></div>
+
+    <!-- HUD (In-Game Overlay) -->
+    <div id="hud" class="hidden">
+        <div class="hud-top">
+            <div class="hud-stats">
+                <div class="stat-pill"><span>LVL</span> <strong id="hud-level">1</strong></div>
+                <div class="stat-pill"><span>SCORE</span> <strong id="hud-score">0</strong></div>
+                <div class="stat-pill"><span>GEMS</span> <strong id="hud-gems">0</strong></div>
+                <div class="stat-pill" id="timer-pill" style="display:none;"><span>TIME</span> <strong id="hud-timer">60</strong></div>
+            </div>
+            <div class="hud-controls">
+                <button id="btn-mute" class="icon-btn" aria-label="Mute Audio">🔊</button>
+                <button id="btn-pause" class="icon-btn" aria-label="Pause Game">⏸</button>
+            </div>
+        </div>
+
+        <!-- Evolution Progress Bar -->
+        <div class="evo-bar-wrapper">
+            <div class="evo-label">
+                <span id="evo-stage-name">1. CUBE</span>
+                <span id="evo-next-name">NEXT: SPHERE</span>
+            </div>
+            <div class="evo-progress-bg">
+                <div id="evo-progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="touch-hint">DRAG LEFT / RIGHT TO MOVE • TAP / SPACE TO JUMP</div>
+    </div>
+
+    <!-- Main Menu Screen -->
+    <div id="menu-screen" class="overlay-screen">
+        <div class="panel">
+            <h1 class="game-title">SHAPE EVOLUTION <span>3D</span></h1>
+            <p class="subtitle">Collect Energy Gems • Evolve Your Form • Survive</p>
+
+            <div class="currency-bar">
+                <div class="curr-item">💎 <span id="menu-gems">0</span></div>
+                <div class="curr-item">🪙 <span id="menu-coins">0</span></div>
+                <div class="curr-item">🏆 <span id="menu-highscore">0</span></div>
+            </div>
+
+            <button id="btn-daily-reward" class="btn-secondary">🎁 CLAIM DAILY REWARD (+100 COINS)</button>
+
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="classic">CLASSIC (50 LVLS)</button>
+                <button class="mode-btn" data-mode="endless">ENDLESS</button>
+                <button class="mode-btn" data-mode="time">TIME ATTACK</button>
+                <button class="mode-btn" data-mode="evolution">EVOLUTION RUSH</button>
+            </div>
+
+            <div id="level-select-row" class="level-row">
+                <button id="btn-lvl-prev" class="small-btn">◀</button>
+                <span>LEVEL <strong id="selected-level-num">1</strong> / 50</span>
+                <button id="btn-lvl-next" class="small-btn">▶</button>
+            </div>
+
+            <button id="btn-play" class="btn-primary">PLAY NOW</button>
+        </div>
+    </div>
+
+    <!-- Pause Screen -->
+    <div id="pause-screen" class="overlay-screen hidden">
+        <div class="panel">
+            <h2>GAME PAUSED</h2>
+            <button id="btn-resume" class="btn-primary">RESUME</button>
+            <button id="btn-restart-pause" class="btn-secondary">RESTART LEVEL</button>
+            <button id="btn-home-pause" class="btn-secondary">MAIN MENU</button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameover-screen" class="overlay-screen hidden">
+        <div class="panel">
+            <h2 class="danger-text">SHATTERED!</h2>
+            <p id="gameover-reason">You collided with a hazard.</p>
+            <div class="summary-box">
+                <div>SCORE: <strong id="go-score">0</strong></div>
+                <div>HIGH SCORE: <strong id="go-highscore">0</strong></div>
+                <div>FORM REACHED: <strong id="go-form">CUBE</strong></div>
+            </div>
+            <button id="btn-revive" class="btn-reward">🎬 REVIVE (WATCH AD / BONUS)</button>
+            <button id="btn-retry" class="btn-primary">TRY AGAIN</button>
+            <button id="btn-home-go" class="btn-secondary">MAIN MENU</button>
+        </div>
+    </div>
+
+    <!-- Victory Screen -->
+    <div id="victory-screen" class="overlay-screen hidden">
+        <div class="panel">
+            <h2 class="success-text">LEVEL COMPLETE!</h2>
+            <div class="summary-box">
+                <div>SCORE: <strong id="vic-score">0</strong></div>
+                <div>COINS EARNED: <strong id="vic-coins">+50</strong></div>
+                <div>FINAL FORM: <strong id="vic-form">SPHERE</strong></div>
+            </div>
+            <button id="btn-double-coins" class="btn-reward">🎬 2X COINS BONUS</button>
+            <button id="btn-next-level" class="btn-primary">NEXT LEVEL ▶</button>
+            <button id="btn-home-vic" class="btn-secondary">MAIN MENU</button>
+        </div>
+    </div>
+
+    <!-- Banner Ad Placeholder Container (Optional for Portal Integration) -->
+    <div id="portal-banner-slot" class="banner-slot hidden"></div>
+
+    <script src="levels.js"></script>
+    <script src="game.js"></script>
+</body>
+              </html>
+              
