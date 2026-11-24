@@ -7,6 +7,60 @@
     <link rel="stylesheet" href="style.css">
     <!-- Three.js Free CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- =========================================================
+         PORTAL SDK INTEGRATION SLOTS (UNCOMMENT ONLY THE ONE YOU NEED)
+         ========================================================= -->
+    
+    <!-- [OPTION A] CRAZYGAMES SDK v3: Uncomment the line below when uploading to CrazyGames -->
+    <!-- <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script> -->
+
+    <!-- [OPTION B] GAMEDISTRIBUTION SDK: Uncomment & replace YOUR_GD_GAME_ID when uploading to GD -->
+    <!--
+    <script>
+        window["GD_OPTIONS"] = {
+            "gameId": "YOUR_GD_GAME_ID",
+            "onEvent": function(event) {
+                if (event.name === "SDK_GAME_PAUSE" && window.game) {
+                    window.game.sound.muted = true;
+                    window.game.sound.stopBGM();
+                } else if (event.name === "SDK_GAME_START" && window.game) {
+                    window.game.sound.muted = false;
+                    if (window.game.state === "PLAYING") window.game.sound.startBGM();
+                }
+            }
+        };
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://html5.api.gamedistribution.com/main.min.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'gamedistribution-jssdk'));
+    </script>
+    -->
+
+    <!-- [OPTION C] GAMEMONETIZE SDK: Uncomment & replace YOUR_GM_GAME_ID when uploading to GM -->
+    <!--
+    <script type="text/javascript">
+        window.SDK_OPTIONS = {
+            gameId: "YOUR_GM_GAME_ID",
+            onEvent: function (a) {
+                if (a.name === "SDK_GAME_PAUSE" && window.game) {
+                    window.game.sound.muted = true;
+                    window.game.sound.stopBGM();
+                } else if (a.name === "SDK_GAME_START" && window.game) {
+                    window.game.sound.muted = false;
+                    if (window.game.state === "PLAYING") window.game.sound.startBGM();
+                }
+            }
+        };
+        (function (a, b, c) {
+            var d = a.getElementsByTagName(b)[0];
+            a.getElementById(c) || (a = a.createElement(b), a.id = c, a.src = "https://api.gamemonetize.com/sdk.js", d.parentNode.insertBefore(a, d))
+        })(document, "script", "gamemonetize-sdk");
+    </script>
+    -->
 </head>
 <body>
     <div id="game-container"></div>
@@ -44,7 +98,7 @@
     <div id="menu-screen" class="overlay-screen">
         <div class="panel">
             <h1 class="game-title">SHAPE EVOLUTION <span>3D</span></h1>
-            <p class="subtitle">Collect Energy Gems • Evolve Your Form • Survive</p>
+            <p class="subtitle">Collect Energy Gems • Evolve Your Form • 500 Levels</p>
 
             <div class="currency-bar">
                 <div class="curr-item">💎 <span id="menu-gems">0</span></div>
@@ -55,7 +109,7 @@
             <button id="btn-daily-reward" class="btn-secondary">🎁 CLAIM DAILY REWARD (+100 COINS)</button>
 
             <div class="mode-selector">
-                <button class="mode-btn active" data-mode="classic">CLASSIC (50 LVLS)</button>
+                <button class="mode-btn active" data-mode="classic">CLASSIC (500 LVLS)</button>
                 <button class="mode-btn" data-mode="endless">ENDLESS</button>
                 <button class="mode-btn" data-mode="time">TIME ATTACK</button>
                 <button class="mode-btn" data-mode="evolution">EVOLUTION RUSH</button>
@@ -63,7 +117,7 @@
 
             <div id="level-select-row" class="level-row">
                 <button id="btn-lvl-prev" class="small-btn">◀</button>
-                <span>LEVEL <strong id="selected-level-num">1</strong> / 50</span>
+                <span>LEVEL <strong id="selected-level-num">1</strong> / 500</span>
                 <button id="btn-lvl-next" class="small-btn">▶</button>
             </div>
 
@@ -112,11 +166,10 @@
         </div>
     </div>
 
-    <!-- Banner Ad Placeholder Container (Optional for Portal Integration) -->
+    <!-- Banner Ad Placeholder Container -->
     <div id="portal-banner-slot" class="banner-slot hidden"></div>
 
     <script src="levels.js"></script>
     <script src="game.js"></script>
 </body>
-              </html>
-              
+</html>
