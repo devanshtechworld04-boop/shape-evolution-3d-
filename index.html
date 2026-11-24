@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Shape Evolution 3D</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Three.js Free CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Primary & Fallback Free Three.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"
+            onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';"></script>
 
-    <!-- =========================================================
-         PORTAL SDK INTEGRATION SLOTS (UNCOMMENT ONLY THE ONE YOU NEED)
-         ========================================================= -->
-    
-    <!-- [OPTION A] CRAZYGAMES SDK v3: Uncomment the line below when uploading to CrazyGames -->
+    <!-- [OPTION A] CRAZYGAMES SDK v3: Uncomment when uploading to CrazyGames -->
     <!-- <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script> -->
 
-    <!-- [OPTION B] GAMEDISTRIBUTION SDK: Uncomment & replace YOUR_GD_GAME_ID when uploading to GD -->
+    <!-- [OPTION B] GAMEDISTRIBUTION SDK: Uncomment & replace YOUR_GD_GAME_ID -->
     <!--
     <script>
         window["GD_OPTIONS"] = {
@@ -40,7 +37,7 @@
     </script>
     -->
 
-    <!-- [OPTION C] GAMEMONETIZE SDK: Uncomment & replace YOUR_GM_GAME_ID when uploading to GM -->
+    <!-- [OPTION C] GAMEMONETIZE SDK: Uncomment & replace YOUR_GM_GAME_ID -->
     <!--
     <script type="text/javascript">
         window.SDK_OPTIONS = {
@@ -80,7 +77,6 @@
             </div>
         </div>
 
-        <!-- Evolution Progress Bar -->
         <div class="evo-bar-wrapper">
             <div class="evo-label">
                 <span id="evo-stage-name">1. CUBE</span>
@@ -166,7 +162,6 @@
         </div>
     </div>
 
-    <!-- Banner Ad Placeholder Container -->
     <div id="portal-banner-slot" class="banner-slot hidden"></div>
 
     <script src="levels.js"></script>
