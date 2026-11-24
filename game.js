@@ -1,5 +1,5 @@
 /**
- * SHAPE EVOLUTION 3D - Complete Three.js Engine & Multi-Portal SDK Bridge
+ * SHAPE EVOLUTION 3D - Complete Three.js Engine (500 Levels) & Multi-Portal SDK Bridge
  */
 
 // ==========================================
@@ -7,10 +7,13 @@
 // ==========================================
 const PortalBridge = {
     sdkReady: false,
-    init() {
-        // Auto-detect CrazyGames, GameDistribution, or GameMonetize if injected by portal
+    async init() {
+        // Auto-initialize CrazyGames SDK v3 if loaded
         if (window.CrazyGames && window.CrazyGames.SDK) {
-            this.sdkReady = true;
+            try {
+                await window.CrazyGames.SDK.init();
+                this.sdkReady = true;
+            } catch (e) {}
         }
     },
     gameplayStart() {
@@ -25,7 +28,6 @@ const PortalBridge = {
     },
     showInterstitial(onComplete) {
         this.gameplayStop();
-        // Hook for CrazyGames / GameDistribution / GameMonetize Midgame Ad
         if (window.CrazyGames?.SDK?.ad) {
             window.CrazyGames.SDK.ad.requestAd("midgame", {
                 adFinished: () => onComplete && onComplete(),
@@ -37,7 +39,6 @@ const PortalBridge = {
             window.sdk.showBanner();
             if (onComplete) onComplete();
         } else {
-            // Core game stays 100% playable without ads
             if (onComplete) onComplete();
         }
     },
@@ -50,8 +51,10 @@ const PortalBridge = {
             });
         } else if (typeof window.gdsdk !== "undefined" && window.gdsdk.showAd) {
             window.gdsdk.showAd("rewarded").then(() => onReward && onReward()).catch(() => onCancel && onCancel());
+        } else if (typeof window.sdk !== "undefined" && window.sdk.showBanner) {
+            window.sdk.showBanner();
+            if (onReward) onReward();
         } else {
-            // Fallback instant bonus when running standalone / offline without SDK
             if (onReward) onReward();
         }
     }
@@ -227,9 +230,9 @@ class ShapeEvolutionGame {
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Mobile battery & FPS optimization
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.BasicShadowMap; // Lightweight shadow for Android
+        this.renderer.shadowMap.type = THREE.BasicShadowMap;
         this.container.appendChild(this.renderer.domElement);
 
         // Lights
@@ -530,7 +533,6 @@ class ShapeEvolutionGame {
         }
 
         if (this.state !== "PLAYING") {
-            // Idle menu spin
             if (this.playerMesh) {
                 this.playerMesh.rotation.y += dt * 1.2;
                 this.playerMesh.rotation.x += dt * 0.5;
@@ -541,4 +543,6 @@ class ShapeEvolutionGame {
         if (this.invulnerableTimer > 0) this.invulnerableTimer -= dt;
 
         // Time Challenge Countdown
-        if (this.mo
+        if (this.mode === "time") {
+            this.timeLeft -= dt;
+            document.getElem
