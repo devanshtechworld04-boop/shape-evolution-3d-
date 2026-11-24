@@ -117,8 +117,8 @@ const LEVELS_DATA = (() => {
 
         // Smooth progression curve from Level 1 to Level 500
         const progressRatio = (i - 1) / (TOTAL_LEVELS - 1);
-        const length = Math.floor(260 + i * 3.8); // Scales from 260m to ~2,160m
-        const baseSpeed = +(16 + progressRatio * 18).toFixed(2); // Scales from 16 to 34
+        const length = Math.floor(260 + i * 3.8);
+        const baseSpeed = +(16 + progressRatio * 18).toFixed(2);
         const obstacleSpacing = Math.max(10.5, +(22 - progressRatio * 11.5).toFixed(2));
         const targetFormIndex = Math.min(Math.floor((i - 1) / 70) + 1, EVOLUTION_FORMS.length - 1);
 
