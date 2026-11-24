@@ -1,14 +1,10 @@
 /**
- * SHAPE EVOLUTION 3D - Complete Three.js Engine (500 Levels) & Multi-Portal SDK Bridge
+ * SHAPE EVOLUTION 3D - Bulletproof Three.js Engine (500 Levels)
  */
 
-// ==========================================
-// 1. MULTI-PORTAL MONETIZATION & SDK BRIDGE
-// ==========================================
 const PortalBridge = {
     sdkReady: false,
     async init() {
-        // Auto-initialize CrazyGames SDK v3 if loaded
         if (window.CrazyGames && window.CrazyGames.SDK) {
             try {
                 await window.CrazyGames.SDK.init();
@@ -60,9 +56,6 @@ const PortalBridge = {
     }
 };
 
-// ==========================================
-// 2. PROCEDURAL WEB AUDIO SYNTHESIZER
-// ==========================================
 class SoundEngine {
     constructor() {
         this.ctx = null;
@@ -71,30 +64,34 @@ class SoundEngine {
     }
 
     init() {
-        if (!this.ctx) {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (AudioCtx) this.ctx = new AudioCtx();
-        }
-        if (this.ctx && this.ctx.state === "suspended") {
-            this.ctx.resume();
-        }
+        try {
+            if (!this.ctx) {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (AudioCtx) this.ctx = new AudioCtx();
+            }
+            if (this.ctx && this.ctx.state === "suspended") {
+                this.ctx.resume();
+            }
+        } catch (e) {}
     }
 
     playTone(freq, type, duration, vol = 0.15, slideTo = null) {
         if (this.muted || !this.ctx) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        if (slideTo) {
-            osc.frequency.exponentialRampToValueAtTime(slideTo, this.ctx.currentTime + duration);
-        }
-        gain.gain.setValueAtTime(vol, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + duration);
+        try {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            if (slideTo) {
+                osc.frequency.exponentialRampToValueAtTime(slideTo, this.ctx.currentTime + duration);
+            }
+            gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
     }
 
     playGem() { this.playTone(680, "sine", 0.14, 0.16, 1180); }
@@ -132,9 +129,6 @@ class SoundEngine {
     }
 }
 
-// ==========================================
-// 3. LOCAL STORAGE SAVE MANAGER
-// ==========================================
 const SaveManager = {
     KEY: "shape_evolution_3d_save_v1",
     data: {
@@ -170,9 +164,6 @@ const SaveManager = {
     }
 };
 
-// ==========================================
-// 4. MAIN 3D GAME ENGINE
-// ==========================================
 class ShapeEvolutionGame {
     constructor() {
         SaveManager.load();
@@ -180,9 +171,8 @@ class ShapeEvolutionGame {
         this.sound = new SoundEngine();
         this.sound.muted = SaveManager.data.muted;
 
-        // Game State
-        this.state = "MENU"; // MENU, PLAYING, PAUSED, GAMEOVER, VICTORY
-        this.mode = "classic"; // classic, endless, time, evolution
+        this.state = "MENU";
+        this.mode = "classic";
         this.currentLevelNum = SaveManager.data.selectedLevel || 1;
         this.score = 0;
         this.runGems = 0;
@@ -191,7 +181,6 @@ class ShapeEvolutionGame {
         this.timeLeft = 60;
         this.invulnerableTimer = 0;
 
-        // Track & Player Physics
         this.trackWidth = 8.4;
         this.playerX = 0;
         this.targetX = 0;
@@ -200,22 +189,34 @@ class ShapeEvolutionGame {
         this.velocityY = 0;
         this.isGrounded = true;
 
-        // World Entities
         this.obstacles = [];
         this.collectibles = [];
         this.particles = [];
         this.trackTiles = [];
         this.nextSpawnZ = -28;
         this.finishLine = null;
+        this.engineReady = false;
 
-        this.initThree();
-        this.initPlayerMesh();
+        // Bind UI buttons FIRST so buttons ALWAYS work
         this.bindEvents();
         this.updateMenuUI();
 
-        this.clock = new THREE.Clock();
-        this.animate = this.animate.bind(this);
-        requestAnimationFrame(this.animate);
+        // Initialize 3D Engine safely
+        if (typeof THREE !== "undefined") {
+            try {
+                this.initThree();
+                this.initPlayerMesh();
+                this.engineReady = true;
+                this.clock = new THREE.Clock();
+                this.animate = this.animate.bind(this);
+                requestAnimationFrame(this.animate);
+            } catch (err) {
+                console.error("WebGL Init Error:", err);
+                alert("WebGL initialization issue on this browser: " + err.message);
+            }
+        } else {
+            alert("3D library (Three.js) failed to load. Please check internet connection and refresh.");
+        }
     }
 
     initThree() {
@@ -230,13 +231,12 @@ class ShapeEvolutionGame {
 
         this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.BasicShadowMap;
         this.container.appendChild(this.renderer.domElement);
 
-        // Lights
-        const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+        const ambient = new THREE.AmbientLight(0xffffff, 0.7);
         this.scene.add(ambient);
 
         this.dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
@@ -249,13 +249,13 @@ class ShapeEvolutionGame {
 
     createEvolutionGeometry(formIndex) {
         switch (formIndex) {
-            case 0: return new THREE.BoxGeometry(1.15, 1.15, 1.15); // Cube
-            case 1: return new THREE.SphereGeometry(0.72, 24, 24); // Sphere
-            case 2: return new THREE.ConeGeometry(0.82, 1.35, 4); // Pyramid
-            case 3: return new THREE.OctahedronGeometry(0.85, 0); // Diamond
-            case 4: return new THREE.CylinderGeometry(0.78, 0.78, 0.9, 6); // Hexagon
-            case 5: return new THREE.IcosahedronGeometry(0.86, 0); // Crystal
-            case 6: return new THREE.TorusKnotGeometry(0.55, 0.2, 64, 12); // Ultimate Energy Shape
+            case 0: return new THREE.BoxGeometry(1.15, 1.15, 1.15);
+            case 1: return new THREE.SphereGeometry(0.72, 24, 24);
+            case 2: return new THREE.ConeGeometry(0.82, 1.35, 4);
+            case 3: return new THREE.OctahedronGeometry(0.85, 0);
+            case 4: return new THREE.CylinderGeometry(0.78, 0.78, 0.9, 6);
+            case 5: return new THREE.IcosahedronGeometry(0.86, 0);
+            case 6: return new THREE.TorusKnotGeometry(0.55, 0.2, 64, 12);
             default: return new THREE.BoxGeometry(1.15, 1.15, 1.15);
         }
     }
@@ -274,7 +274,6 @@ class ShapeEvolutionGame {
         this.playerMesh.castShadow = true;
         this.playerGroup.add(this.playerMesh);
 
-        // Energy Aura Ring
         const ringGeo = new THREE.RingGeometry(0.85, 1.05, 32);
         const ringMat = new THREE.MeshBasicMaterial({
             color: form.color,
@@ -324,6 +323,10 @@ class ShapeEvolutionGame {
     }
 
     startLevel(levelNum) {
+        if (!this.engineReady) {
+            alert("3D Engine is still loading. Please refresh the page once.");
+            return;
+        }
         this.sound.init();
         this.sound.startBGM();
         this.clearWorld();
@@ -331,12 +334,10 @@ class ShapeEvolutionGame {
         this.currentLevelNum = levelNum;
         this.levelConfig = LEVELS_DATA[(levelNum - 1) % LEVELS_DATA.length];
 
-        // Apply Theme
         const theme = this.levelConfig.theme;
         this.scene.background.setHex(theme.sky);
         this.scene.fog.color.setHex(theme.fog);
 
-        // Reset Player
         this.playerX = 0;
         this.targetX = 0;
         this.playerY = 0.7;
@@ -351,12 +352,10 @@ class ShapeEvolutionGame {
 
         this.evolveTo(0, true);
 
-        // Build Initial Track Segments
         for (let i = 0; i < 14; i++) {
             this.spawnTrackSegment(-i * 15);
         }
 
-        // Build Finish Line for Classic & Time modes
         if (this.mode === "classic" || this.mode === "time") {
             const finGeo = new THREE.BoxGeometry(this.trackWidth, 0.25, 2.5);
             const finMat = new THREE.MeshBasicMaterial({ color: 0x00ff88 });
@@ -387,7 +386,6 @@ class ShapeEvolutionGame {
         road.receiveShadow = true;
         group.add(road);
 
-        // Neon Side Rails
         const railGeo = new THREE.BoxGeometry(0.22, 0.35, 15);
         const railMat = new THREE.MeshBasicMaterial({ color: theme.grid });
         const leftRail = new THREE.Mesh(railGeo, railMat);
@@ -461,7 +459,6 @@ class ShapeEvolutionGame {
             );
             mesh.position.set(laneX, 0.55, zPos);
         } else {
-            // moving_wall
             mesh = new THREE.Mesh(
                 new THREE.BoxGeometry(3.5, 2.2, 0.9),
                 new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0x4c0519 })
@@ -474,7 +471,6 @@ class ShapeEvolutionGame {
         obsData.mesh = mesh;
         this.obstacles.push(obsData);
 
-        // Spawn Energy Gems & Coins in safe offset lane
         const gemX = laneX > 0 ? -2.2 : 2.2;
         const isCoin = Math.random() < 0.32;
         const colGeo = isCoin
@@ -517,7 +513,6 @@ class ShapeEvolutionGame {
     }
 
     update(dt) {
-        // Particles update always
         for (let i = this.particles.length - 1; i >= 0; i--) {
             const p = this.particles[i];
             p.life -= dt;
@@ -542,7 +537,14 @@ class ShapeEvolutionGame {
 
         if (this.invulnerableTimer > 0) this.invulnerableTimer -= dt;
 
-        // Time Challenge Countdown
         if (this.mode === "time") {
             this.timeLeft -= dt;
-            document.getElem
+            document.getElementById("hud-timer").textContent = Math.max(0, Math.ceil(this.timeLeft));
+            if (this.timeLeft <= 0) {
+                this.triggerGameOver("Time ran out!");
+                return;
+            }
+        }
+
+        const form = EVOLUTION_FORMS[this.currentFormIdx];
+        const endlessRamp = this.mode === "
