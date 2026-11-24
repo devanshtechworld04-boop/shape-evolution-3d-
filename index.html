@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Shape Evolution 3D</title>
-    <!-- Primary & Fallback Three.js Free CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"
-            onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';"></script>
 
     <!-- [OPTION A] CRAZYGAMES SDK v3: Uncomment when uploading to CrazyGames -->
     <!-- <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script> -->
@@ -17,13 +14,8 @@
         window["GD_OPTIONS"] = {
             "gameId": "YOUR_GD_GAME_ID",
             "onEvent": function(event) {
-                if (event.name === "SDK_GAME_PAUSE" && window.game) {
-                    window.game.sound.muted = true;
-                    window.game.sound.stopBGM();
-                } else if (event.name === "SDK_GAME_START" && window.game) {
-                    window.game.sound.muted = false;
-                    if (window.game.state === "PLAYING") window.game.sound.startBGM();
-                }
+                if (event.name === "SDK_GAME_PAUSE" && window.game) { window.game.sound.muted = true; window.game.sound.stopBGM(); }
+                else if (event.name === "SDK_GAME_START" && window.game) { window.game.sound.muted = false; if (window.game.state === "PLAYING") window.game.sound.startBGM(); }
             }
         };
         (function(d, s, id) {
@@ -42,13 +34,8 @@
         window.SDK_OPTIONS = {
             gameId: "YOUR_GM_GAME_ID",
             onEvent: function (a) {
-                if (a.name === "SDK_GAME_PAUSE" && window.game) {
-                    window.game.sound.muted = true;
-                    window.game.sound.stopBGM();
-                } else if (a.name === "SDK_GAME_START" && window.game) {
-                    window.game.sound.muted = false;
-                    if (window.game.state === "PLAYING") window.game.sound.startBGM();
-                }
+                if (a.name === "SDK_GAME_PAUSE" && window.game) { window.game.sound.muted = true; window.game.sound.stopBGM(); }
+                else if (a.name === "SDK_GAME_START" && window.game) { window.game.sound.muted = false; if (window.game.state === "PLAYING") window.game.sound.startBGM(); }
             }
         };
         (function (a, b, c) {
@@ -61,7 +48,7 @@
     <style>
         :root {
             --bg-dark: #070b19;
-            --panel-bg: rgba(13, 21, 45, 0.90);
+            --panel-bg: rgba(13, 21, 45, 0.92);
             --accent: #00f0ff;
             --accent-2: #ff007f;
             --gold: #ffd700;
@@ -69,7 +56,6 @@
             --text-main: #ffffff;
             --text-muted: #94a3b8;
         }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -79,7 +65,6 @@
             -webkit-tap-highlight-color: transparent;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-
         html, body {
             width: 100%;
             height: 100%;
@@ -87,19 +72,16 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
         }
-
-        #game-container {
+        #game-canvas {
             position: fixed;
             inset: 0;
             width: 100%;
             height: 100%;
+            display: block;
             z-index: 1;
             touch-action: none;
         }
-
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         /* HUD */
         #hud {
@@ -112,48 +94,30 @@
             justify-content: space-between;
             padding: 14px;
         }
-
         .hud-top {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             gap: 8px;
         }
-
-        .hud-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
+        .hud-stats { display: flex; flex-wrap: wrap; gap: 8px; }
         .stat-pill {
-            background: rgba(10, 18, 38, 0.82);
-            border: 1px solid rgba(0, 240, 255, 0.35);
+            background: rgba(10, 18, 38, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.4);
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.82rem;
             letter-spacing: 0.5px;
         }
-
         .stat-pill span { color: var(--text-muted); margin-right: 4px; }
         .stat-pill strong { color: var(--accent); }
-
-        .hud-controls {
-            display: flex;
-            gap: 8px;
-            pointer-events: auto;
-        }
-
-        button {
-            touch-action: manipulation;
-            cursor: pointer;
-        }
-
+        .hud-controls { display: flex; gap: 8px; pointer-events: auto; }
+        button { touch-action: manipulation; cursor: pointer; }
         .icon-btn {
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             background: rgba(10, 18, 38, 0.9);
             color: #fff;
             font-size: 1.1rem;
@@ -161,19 +125,17 @@
             align-items: center;
             justify-content: center;
         }
-
         .evo-bar-wrapper {
             position: absolute;
             top: 66px;
             left: 50%;
             transform: translateX(-50%);
             width: min(90%, 420px);
-            background: rgba(10, 18, 38, 0.82);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(10, 18, 38, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             border-radius: 12px;
             padding: 8px 12px;
         }
-
         .evo-label {
             display: flex;
             justify-content: space-between;
@@ -182,9 +144,7 @@
             margin-bottom: 5px;
             color: var(--accent);
         }
-
         #evo-next-name { color: var(--gold); }
-
         .evo-progress-bg {
             width: 100%;
             height: 8px;
@@ -192,19 +152,17 @@
             border-radius: 6px;
             overflow: hidden;
         }
-
         #evo-progress-fill {
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--gold));
-            transition: width 0.25s ease-out;
+            transition: width 0.2s ease-out;
         }
-
         .touch-hint {
             text-align: center;
             font-size: 0.72rem;
             letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.65);
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 6px;
         }
 
@@ -213,18 +171,17 @@
             position: fixed;
             inset: 0;
             z-index: 20;
-            background: rgba(5, 8, 20, 0.76);
+            background: rgba(5, 8, 20, 0.72);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 16px;
         }
-
         .panel {
             width: min(100%, 430px);
             background: var(--panel-bg);
-            border: 1px solid rgba(0, 240, 255, 0.35);
-            box-shadow: 0 0 35px rgba(0, 240, 255, 0.18);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.2);
             border-radius: 20px;
             padding: 24px 20px;
             text-align: center;
@@ -232,54 +189,34 @@
             flex-direction: column;
             gap: 14px;
         }
-
-        .game-title {
-            font-size: 1.9rem;
-            font-weight: 900;
-            letter-spacing: 1.5px;
-            line-height: 1.1;
-        }
-
-        .game-title span {
-            color: var(--accent);
-            text-shadow: 0 0 14px var(--accent);
-        }
-
+        .game-title { font-size: 1.9rem; font-weight: 900; letter-spacing: 1.5px; line-height: 1.1; }
+        .game-title span { color: var(--accent); text-shadow: 0 0 14px var(--accent); }
         .subtitle { font-size: 0.85rem; color: var(--text-muted); }
-
         .currency-bar {
             display: flex;
             justify-content: space-around;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.45);
             padding: 10px;
             border-radius: 12px;
             font-weight: 700;
             font-size: 0.95rem;
         }
-
-        .mode-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
+        .mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .mode-btn {
             padding: 10px 6px;
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.22);
             background: rgba(255, 255, 255, 0.06);
             color: var(--text-muted);
             font-size: 0.76rem;
             font-weight: 700;
         }
-
         .mode-btn.active {
-            background: rgba(0, 240, 255, 0.2);
+            background: rgba(0, 240, 255, 0.22);
             border-color: var(--accent);
             color: #fff;
             box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
         }
-
         .level-row {
             display: flex;
             align-items: center;
@@ -287,17 +224,15 @@
             gap: 16px;
             font-size: 0.95rem;
         }
-
         .small-btn {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 8px;
             border: 1px solid var(--accent);
             background: rgba(0, 240, 255, 0.15);
             color: #fff;
             font-weight: bold;
         }
-
         .btn-primary, .btn-secondary, .btn-reward {
             width: 100%;
             padding: 14px;
@@ -307,35 +242,27 @@
             font-weight: 800;
             letter-spacing: 1px;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #00f0ff, #0077ff);
             color: #041024;
             box-shadow: 0 6px 20px rgba(0, 240, 255, 0.35);
         }
-
         .btn-secondary {
             background: rgba(255, 255, 255, 0.12);
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             font-size: 0.85rem;
             padding: 11px;
         }
-
         .btn-reward {
             background: linear-gradient(135deg, #ffd700, #ff8c00);
             color: #1a0f00;
             font-size: 0.9rem;
         }
-
-        .btn-primary:active, .btn-secondary:active, .btn-reward:active, .icon-btn:active {
-            transform: scale(0.96);
-        }
-
+        .btn-primary:active, .btn-secondary:active, .btn-reward:active, .icon-btn:active { transform: scale(0.96); }
         .btn-secondary:disabled { opacity: 0.45; }
-
         .summary-box {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.45);
             border-radius: 12px;
             padding: 12px;
             display: flex;
@@ -343,20 +270,8 @@
             gap: 6px;
             font-size: 0.92rem;
         }
-
         .danger-text { color: #ff3b5c; }
         .success-text { color: var(--success); }
-
-        .banner-slot {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 320px;
-            height: 50px;
-            z-index: 30;
-        }
-
         @media (orientation: landscape) and (max-height: 500px) {
             .panel { padding: 14px 18px; gap: 8px; }
             .game-title { font-size: 1.4rem; }
@@ -365,7 +280,7 @@
     </style>
 </head>
 <body>
-    <div id="game-container"></div>
+    <canvas id="game-canvas"></canvas>
 
     <!-- HUD -->
     <div id="hud" class="hidden">
@@ -395,7 +310,7 @@
         <div class="touch-hint">DRAG LEFT / RIGHT TO MOVE • TAP / SPACE TO JUMP</div>
     </div>
 
-    <!-- Main Menu Screen -->
+    <!-- Main Menu -->
     <div id="menu-screen" class="overlay-screen">
         <div class="panel">
             <h1 class="game-title">SHAPE EVOLUTION <span>3D</span></h1>
@@ -426,7 +341,7 @@
         </div>
     </div>
 
-    <!-- Pause Screen -->
+    <!-- Pause -->
     <div id="pause-screen" class="overlay-screen hidden">
         <div class="panel">
             <h2>GAME PAUSED</h2>
@@ -436,7 +351,7 @@
         </div>
     </div>
 
-    <!-- Game Over Screen -->
+    <!-- Game Over -->
     <div id="gameover-screen" class="overlay-screen hidden">
         <div class="panel">
             <h2 class="danger-text">SHATTERED!</h2>
@@ -452,7 +367,7 @@
         </div>
     </div>
 
-    <!-- Victory Screen -->
+    <!-- Victory -->
     <div id="victory-screen" class="overlay-screen hidden">
         <div class="panel">
             <h2 class="success-text">LEVEL COMPLETE!</h2>
@@ -467,55 +382,50 @@
         </div>
     </div>
 
-    <div id="portal-banner-slot" class="banner-slot hidden"></div>
-
     <script>
     // ==========================================
-    // 1. EVOLUTION FORMS & 500 LEVELS DATA
+    // 1. EVOLUTION FORMS & 500 LEVELS
     // ==========================================
     const EVOLUTION_FORMS = [
-        { id: 0, name: "1. CUBE", shortName: "CUBE", requiredGems: 0, color: 0x00f0ff, emissive: 0x005577, scale: 1.0, speedBonus: 1.0, jumpBonus: 1.0 },
-        { id: 1, name: "2. SPHERE", shortName: "SPHERE", requiredGems: 5, color: 0x00ff88, emissive: 0x005522, scale: 1.08, speedBonus: 1.06, jumpBonus: 1.05 },
-        { id: 2, name: "3. PYRAMID", shortName: "PYRAMID", requiredGems: 12, color: 0xffd700, emissive: 0x664400, scale: 1.15, speedBonus: 1.12, jumpBonus: 1.1 },
-        { id: 3, name: "4. DIAMOND", shortName: "DIAMOND", requiredGems: 20, color: 0xff007f, emissive: 0x660033, scale: 1.2, speedBonus: 1.18, jumpBonus: 1.15 },
-        { id: 4, name: "5. HEXAGON", shortName: "HEXAGON", requiredGems: 30, color: 0x9d00ff, emissive: 0x3b0066, scale: 1.25, speedBonus: 1.22, jumpBonus: 1.18 },
-        { id: 5, name: "6. CRYSTAL", shortName: "CRYSTAL", requiredGems: 42, color: 0xff5500, emissive: 0x661a00, scale: 1.3, speedBonus: 1.28, jumpBonus: 1.22 },
-        { id: 6, name: "7. ULTIMATE ENERGY", shortName: "ULTIMATE", requiredGems: 55, color: 0xffffff, emissive: 0x00f0ff, scale: 1.38, speedBonus: 1.35, jumpBonus: 1.28 }
+        { id: 0, name: "1. CUBE", shortName: "CUBE", requiredGems: 0, color: "#00f0ff", glow: "#007799", scale: 1.0, speedBonus: 1.0, jumpBonus: 1.0 },
+        { id: 1, name: "2. SPHERE", shortName: "SPHERE", requiredGems: 5, color: "#00ff88", glow: "#008844", scale: 1.08, speedBonus: 1.06, jumpBonus: 1.05 },
+        { id: 2, name: "3. PYRAMID", shortName: "PYRAMID", requiredGems: 12, color: "#ffd700", glow: "#997700", scale: 1.14, speedBonus: 1.12, jumpBonus: 1.1 },
+        { id: 3, name: "4. DIAMOND", shortName: "DIAMOND", requiredGems: 20, color: "#ff007f", glow: "#880044", scale: 1.2, speedBonus: 1.18, jumpBonus: 1.15 },
+        { id: 4, name: "5. HEXAGON", shortName: "HEXAGON", requiredGems: 30, color: "#a855f7", glow: "#581c87", scale: 1.25, speedBonus: 1.22, jumpBonus: 1.18 },
+        { id: 5, name: "6. CRYSTAL", shortName: "CRYSTAL", requiredGems: 42, color: "#ff6b00", glow: "#993d00", scale: 1.3, speedBonus: 1.28, jumpBonus: 1.22 },
+        { id: 6, name: "7. ULTIMATE ENERGY", shortName: "ULTIMATE", requiredGems: 55, color: "#ffffff", glow: "#00f0ff", scale: 1.38, speedBonus: 1.35, jumpBonus: 1.28 }
     ];
 
     const ENVIRONMENT_THEMES = [
-        { sky: 0x070b19, fog: 0x070b19, track: 0x111a33, grid: 0x00f0ff },
-        { sky: 0x14071d, fog: 0x14071d, track: 0x241136, grid: 0xff007f },
-        { sky: 0x051814, fog: 0x051814, track: 0x0c2b24, grid: 0x00ff88 },
-        { sky: 0x1c1205, fog: 0x1c1205, track: 0x30200a, grid: 0xffaa00 },
-        { sky: 0x090d24, fog: 0x090d24, track: 0x161f4d, grid: 0x8a2be2 },
-        { sky: 0x1f050a, fog: 0x1f050a, track: 0x380c15, grid: 0xff3b5c },
-        { sky: 0x041524, fog: 0x041524, track: 0x0b2942, grid: 0x38bdf8 },
-        { sky: 0x161905, fog: 0x161905, track: 0x292e0b, grid: 0xd9f99d },
-        { sky: 0x1a0b1e, fog: 0x1a0b1e, track: 0x301438, grid: 0xf472b6 },
-        { sky: 0x0a0a0f, fog: 0x0a0a0f, track: 0x1c1c26, grid: 0xffffff }
+        { skyTop: "#050914", skyBot: "#0d1b3a", road: "#0f172a", grid: "#00f0ff" },
+        { skyTop: "#14051d", skyBot: "#2d0b42", road: "#1e092c", grid: "#ff007f" },
+        { skyTop: "#041712", skyBot: "#0a362a", road: "#07241c", grid: "#00ff88" },
+        { skyTop: "#1c1104", skyBot: "#3d2508", road: "#291805", grid: "#ffaa00" },
+        { skyTop: "#090b24", skyBot: "#181d54", road: "#101338", grid: "#8b5cf6" },
+        { skyTop: "#1f0409", skyBot: "#450a14", road: "#2b060d", grid: "#ff3b5c" },
+        { skyTop: "#041424", skyBot: "#0b2e52", road: "#071f38", grid: "#38bdf8" },
+        { skyTop: "#151904", skyBot: "#2f3809", road: "#1f2406", grid: "#bef264" },
+        { skyTop: "#1a081e", skyBot: "#3b1245", road: "#260b2c", grid: "#f472b6" },
+        { skyTop: "#08080c", skyBot: "#1e1e2e", road: "#12121c", grid: "#ffffff" }
     ];
 
     const TOTAL_LEVELS = 500;
     const LEVELS_DATA = (() => {
         const levels = [];
-        const obstaclePool = ["moving_block", "laser_gate", "spinning_blade", "falling_platform", "energy_barrier", "moving_wall"];
+        const pool = ["moving_block", "laser_gate", "spinning_blade", "falling_platform", "energy_barrier", "moving_wall"];
         for (let i = 1; i <= TOTAL_LEVELS; i++) {
             const themeIndex = Math.floor((i - 1) / 10) % ENVIRONMENT_THEMES.length;
-            const progressRatio = (i - 1) / (TOTAL_LEVELS - 1);
-            const length = Math.floor(260 + i * 3.8);
-            const baseSpeed = +(16 + progressRatio * 18).toFixed(2);
-            const obstacleSpacing = Math.max(10.5, +(22 - progressRatio * 11.5).toFixed(2));
-            const targetFormIndex = Math.min(Math.floor((i - 1) / 70) + 1, EVOLUTION_FORMS.length - 1);
-            const availableObstacles = obstaclePool.slice(0, Math.min(2 + Math.floor(i / 5), obstaclePool.length));
-
+            const ratio = (i - 1) / (TOTAL_LEVELS - 1);
+            const length = Math.floor(240 + i * 3.5);
+            const baseSpeed = +(18 + ratio * 18).toFixed(2);
+            const obstacleSpacing = Math.max(12, +(24 - ratio * 12).toFixed(2));
+            const availableObstacles = pool.slice(0, Math.min(2 + Math.floor(i / 5), pool.length));
             levels.push({
                 levelNumber: i,
                 length,
                 baseSpeed,
                 obstacleSpacing,
                 theme: ENVIRONMENT_THEMES[themeIndex],
-                targetFormIndex,
                 coinReward: 40 + i * 5,
                 timeLimit: Math.max(45, Math.floor(length / baseSpeed) + 16),
                 availableObstacles
@@ -528,19 +438,34 @@
     // 2. MULTI-PORTAL SDK BRIDGE
     // ==========================================
     const PortalBridge = {
-        sdkReady: false,
         async init() {
             if (window.CrazyGames && window.CrazyGames.SDK) {
-                try {
-                    await window.CrazyGames.SDK.init();
-                    this.sdkReady = true;
-                } catch (e) {}
+                try { await window.CrazyGames.SDK.init(); } catch (e) {}
             }
         },
-        gameplayStart() {
-            try { if (window.CrazyGames?.SDK?.game) window.CrazyGames.SDK.game.gameplayStart(); } catch (e) {}
+        gameplayStart() { try { if (window.CrazyGames?.SDK?.game) window.CrazyGames.SDK.game.gameplayStart(); } catch (e) {} },
+        gameplayStop() { try { if (window.CrazyGames?.SDK?.game) window.CrazyGames.SDK.game.gameplayStop(); } catch (e) {} },
+        showInterstitial(cb) {
+            this.gameplayStop();
+            if (window.CrazyGames?.SDK?.ad) {
+                window.CrazyGames.SDK.ad.requestAd("midgame", { adFinished: () => cb && cb(), adError: () => cb && cb() });
+            } else if (typeof window.gdsdk !== "undefined" && window.gdsdk.showAd) {
+                window.gdsdk.showAd().then(() => cb && cb()).catch(() => cb && cb());
+            } else if (typeof window.sdk !== "undefined" && window.sdk.showBanner) {
+                window.sdk.showBanner(); if (cb) cb();
+            } else { if (cb) cb(); }
         },
-        gameplayStop() {
-            try { if (window.CrazyGames?.SDK?.game) window.CrazyGames.SDK.game.gameplayStop(); } catch (e) {}
-        },
-        show
+        showRewarded(onReward, onCancel) {
+            this.gameplayStop();
+            if (window.CrazyGames?.SDK?.ad) {
+                window.CrazyGames.SDK.ad.requestAd("rewarded", { adFinished: () => onReward && onReward(), adError: () => onCancel && onCancel() });
+            } else if (typeof window.gdsdk !== "undefined" && window.gdsdk.showAd) {
+                window.gdsdk.showAd("rewarded").then(() => onReward && onReward()).catch(() => onCancel && onCancel());
+            } else if (typeof window.sdk !== "undefined" && window.sdk.showBanner) {
+                window.sdk.showBanner(); if (onReward) onReward();
+            } else { if (onReward) onReward(); }
+        }
+    };
+
+    // ==========================================
+    // 3. P
